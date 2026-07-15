@@ -9,7 +9,7 @@ const findKey = (obj: any, candidates: string[]) => {
 };
 
 // Robust Date Parser (Handling ISO, YYYY-MM-DD, DD/MM/YYYY)
-const parseDate = (dateStr: string): Date => {
+const parseDate = (dateStr: string): Date | null => {
     let dateObj = new Date(dateStr);
     
     // If standard parsing fails or results in Invalid Date
@@ -52,9 +52,10 @@ const parseDate = (dateStr: string): Date => {
         }
     }
 
-    // Final fallback to now if still invalid
+    // Jangan cipta tarikh semasa jika nilai sumber tidak sah.
+    // Rekod bertarikh rosak perlu diketepikan supaya statistik kekal tepat.
     if (isNaN(dateObj.getTime())) {
-        return new Date(); 
+        return null;
     }
     
     return dateObj;
@@ -105,9 +106,13 @@ const mapRowToRecord = (row: any, index: number, isArrayMode: boolean, headers: 
    // Cleanup strings
    studentName = String(studentName || 'Unknown').trim().toUpperCase();
    className = String(className || '-').trim().toUpperCase();
-   dateStr = String(dateStr || new Date().toISOString());
+   dateStr = String(dateStr || '').trim();
 
    const date = parseDate(dateStr);
+   if (!date) {
+       console.warn(`Rekod ${index} diketepikan kerana tarikh tidak sah:`, dateStr);
+       return null;
+   }
 
    // Calculate Lateness (Base 7:30 AM)
    const schoolStartMinutes = 7 * 60 + 30; // 7:30 AM

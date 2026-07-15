@@ -11,15 +11,25 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ data, onStudentClick }) => {
   const stats = useMemo(() => {
-    const totalLate = data.length;
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 29);
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+    // Kad 30 hari hanya menggunakan rekod dalam 30 hari kalendar terakhir.
+    const last30DaysData = data.filter(record => {
+      const timestamp = new Date(record.timestamp).getTime();
+      return Number.isFinite(timestamp) && timestamp >= thirtyDaysAgo.getTime() && timestamp <= now.getTime();
+    });
+    const totalLate = last30DaysData.length;
     
     // Today's count
     const today = new Date().toDateString();
-    const todayLate = data.filter(d => new Date(d.timestamp).toDateString() === today).length;
+    const todayLate = last30DaysData.filter(d => new Date(d.timestamp).toDateString() === today).length;
 
     // Average minutes late
     const avgMinutes = totalLate > 0 
-      ? Math.round(data.reduce((acc, curr) => acc + curr.minutesLate, 0) / totalLate) 
+      ? Math.round(last30DaysData.reduce((acc, curr) => acc + curr.minutesLate, 0) / totalLate)
       : 0;
 
     // Daily Trend (Last 7 days)
@@ -33,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onStudentClick }) => {
     // Initialize map
     last7Days.forEach(d => dailyCounts[d] = 0);
 
-    data.forEach(r => {
+    last30DaysData.forEach(r => {
         const dStr = new Date(r.timestamp).toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit'});
         if (dailyCounts[dStr] !== undefined) dailyCounts[dStr]++;
     });
@@ -42,7 +52,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onStudentClick }) => {
 
     // Class Stats
     const classCounts: Record<string, number> = {};
-    data.forEach(r => {
+    last30DaysData.forEach(r => {
       classCounts[r.className] = (classCounts[r.className] || 0) + 1;
     });
     const classData = Object.entries(classCounts)
@@ -62,7 +72,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onStudentClick }) => {
           value={stats.totalLate} 
           icon={UserX} 
           color="cyan"
-          subtitle="Rekod terkumpul"
+          subtitle="Rekod sah dalam 30 hari terakhir"
         />
         <StatCard 
           title="Lewat Hari Ini" 

@@ -15,7 +15,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // AI Modal State
+  // Student record analysis modal state
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
   
   // Default Deployment ID provided by user
@@ -58,7 +58,7 @@ const App: React.FC = () => {
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-[128px] pointer-events-none z-0"></div>
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-[128px] pointer-events-none z-0"></div>
 
-      {/* AI Analysis Modal */}
+      {/* Student record analysis modal */}
       <StudentAnalysisModal 
         isOpen={!!selectedStudent} 
         onClose={() => setSelectedStudent(null)} 

@@ -82,6 +82,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ data, onStudentClick }) => {
         .sort((a, b) => b.count - a.count)
         .slice(0, 10); // Top 10
 
+    const uniqueStudentCount = Object.keys(studentCounts).length;
+
     // Cari Kelas Paling Bermasalah Bulan Ini
     const classCounts: Record<string, number> = {};
     filtered.forEach(d => classCounts[d.className] = (classCounts[d.className] || 0) + 1);
@@ -89,6 +91,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ data, onStudentClick }) => {
 
     return {
         total: filtered.length,
+        uniqueStudentCount,
         topStudents,
         topClass: topClass ? { name: topClass[0], count: topClass[1] } : null
     };
@@ -214,7 +217,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ data, onStudentClick }) => {
                     </div>
                     <div className="flex justify-between border-b border-slate-800 pb-2">
                         <span className="text-slate-400">Murid Unik</span>
-                        <span className="text-white font-mono">{monthlyStats?.topStudents.length || 0}</span>
+                        <span className="text-white font-mono">{monthlyStats?.uniqueStudentCount || 0}</span>
                     </div>
                  </div>
             </div>
