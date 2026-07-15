@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { LateRecord } from '../types';
-import { X, BrainCircuit, Activity, Clock, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { X, ClipboardCheck, Activity, Clock } from 'lucide-react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface StudentAnalysisModalProps {
@@ -30,7 +30,7 @@ const StudentAnalysisModal: React.FC<StudentAnalysisModalProps> = ({ isOpen, onC
       minutes: r.minutesLate
     }));
 
-    // AI Prediction / Status
+    // Status berasaskan bilangan rekod sebenar, bukan ramalan AI.
     let status = "NORMAL";
     let color = "text-emerald-400";
     let message = "Pola kehadiran pelajar ini masih terkawal.";
@@ -55,7 +55,7 @@ const StudentAnalysisModal: React.FC<StudentAnalysisModalProps> = ({ isOpen, onC
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose}></div>
       <div className="relative bg-slate-900 border border-cyan-500/30 rounded-2xl w-full max-w-2xl shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
         
-        {/* Header with AI Animation */}
+        {/* Analysis header */}
         <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex justify-between items-start relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-pulse"></div>
           
@@ -65,8 +65,8 @@ const StudentAnalysisModal: React.FC<StudentAnalysisModalProps> = ({ isOpen, onC
             </div>
             <div>
                 <div className="flex items-center gap-2 mb-1">
-                    <BrainCircuit className="w-4 h-4 text-cyan-400 animate-pulse" />
-                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest">AI ANALYSIS</span>
+                    <ClipboardCheck className="w-4 h-4 text-cyan-400" />
+                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest">ANALISIS REKOD</span>
                 </div>
                 <h2 className="text-2xl font-bold text-white">{studentName}</h2>
                 <p className="text-slate-400 text-sm">{stats.lastRecord?.className || 'Pelajar'}</p>
@@ -93,17 +93,18 @@ const StudentAnalysisModal: React.FC<StudentAnalysisModalProps> = ({ isOpen, onC
              </div>
              <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
                 <div className={`absolute inset-0 opacity-10 ${stats.status === 'KRITIKAL' ? 'bg-red-500' : 'bg-emerald-500'}`}></div>
-                <span className="text-slate-400 text-xs uppercase mb-1">Status AI</span>
+                <span className="text-slate-400 text-xs uppercase mb-1">Status Rekod</span>
                 <span className={`text-xl font-bold ${stats.color} tracking-widest`}>{stats.status}</span>
              </div>
           </div>
 
-          {/* AI Insight Box */}
+          {/* Ringkasan berasaskan rekod */}
           <div className="bg-gradient-to-r from-cyan-900/20 to-slate-900 border border-cyan-500/20 p-5 rounded-xl flex gap-4">
-             <BrainCircuit className="w-8 h-8 text-cyan-400 shrink-0 mt-1" />
+             <ClipboardCheck className="w-8 h-8 text-cyan-400 shrink-0 mt-1" />
              <div>
-                <h4 className="text-cyan-100 font-bold mb-1">Analisis Corak Tingkah Laku</h4>
+                <h4 className="text-cyan-100 font-bold mb-1">Ringkasan Berdasarkan Rekod</h4>
                 <p className="text-slate-300 text-sm leading-relaxed">{stats.message}</p>
+                <p className="text-slate-500 text-xs mt-2">Status ditentukan daripada jumlah rekod kelewatan yang diterima melalui Apps Script.</p>
              </div>
           </div>
 
